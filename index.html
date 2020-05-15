@@ -33,11 +33,19 @@
   </video>
 
   <script>
+    // var options = {
+    //   autoplay: 'muted'
+    // };
+    var urlParams = new URLSearchParams(window.location.search);
+    var keys = urlParams.keys();
+    var key;
     var options = {};
+    for(key of keys){
+      // var option = key + ":" + urlParams.get(key);
+      options[key] = urlParams.get(key);
+    }
     var player = videojs('my-player', options, function onPlayerReady() {
       videojs.log('Your player is ready!');
-      
-      // alert('Your training is over');
       // In this context, `this` is the player that was created by Video.js.
       this.play();
 
