@@ -12,17 +12,15 @@
 <!--    <pre>npm start</pre>-->
 <!--    <pre>open http://localhost:9999/sandbox/index.html</pre>-->
 <!--  </div>-->
-
   <video
     id="my-player"
     class="video-js"
     controls
     preload="auto"
-    poster="//vjs.zencdn.net/v/oceans.png"
     data-setup='{}'>
-    <source src="//vjs.zencdn.net/v/oceans.mp4" type="video/mp4"></source>
-    <source src="//vjs.zencdn.net/v/oceans.webm" type="video/webm"></source>
-    <source src="//vjs.zencdn.net/v/oceans.ogv" type="video/ogg"></source>
+<!--    <source src="//vjs.zencdn.net/v/oceans.mp4" type="video/mp4"></source>-->
+<!--    <source src="//vjs.zencdn.net/v/oceans.webm" type="video/webm"></source>-->
+<!--    <source src="//vjs.zencdn.net/v/oceans.ogv" type="video/ogg"></source>-->
     <p class="vjs-no-js">
       To view this video please enable JavaScript, and consider upgrading to a
       web browser that
@@ -31,6 +29,7 @@
       </a>
     </p>
   </video>
+  <button id="togglePipButton">TestPiP</button>
 
   <script>
     // var options = {
@@ -40,10 +39,45 @@
     var keys = urlParams.keys();
     var key;
     var options = {};
+    const video = document.getElementById('my-player');
+    var source = {};
+    source['src'] = 'videoplayback.mp4';
+    source['type'] = 'video/mp4';
     for(key of keys){
-      // var option = key + ":" + urlParams.get(key);
-      options[key] = urlParams.get(key);
+      if(key == 'progressControl' && urlParams.get(key) == 'false'){
+          var progress = {};
+          progress['progressControl'] = false;
+          options['controlBar'] = progress;
+      }else if(key == 'fullscreen' && urlParams.get(key) == 'true'){
+        video.style.setProperty('width', '100vw');
+        video.style.setProperty('height', '100vh');
+      }
+      else options[key] = urlParams.get(key) == 'true';
+      // else options[key] = urlParams.get(key);
     }
+    options['sources'] = source;
+    const togglePipButton = document.getElementById('togglePipButton');
+
+    video.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0');
+    // Hide button if Picture-in-Picture is not supported or disabled.
+    togglePipButton.hidden = !document.pictureInPictureEnabled ||
+      video.disablePictureInPicture;
+    togglePipButton.addEventListener('click', function() {
+      // If there is no element in Picture-in-Picture yet, let’s request
+      // Picture-in-Picture for the video, otherwise leave it.
+      if (!document.pictureInPictureElement) {
+        video.requestPictureInPicture()
+          .catch(error => {
+
+          });
+      } else {
+        document.exitPictureInPicture()
+          .catch(error => {
+            // Video failed to leave Picture-in-Picture mode.
+          });
+      }
+    });
+    // video.webkitRequestFullscreen();
     var player = videojs('my-player', options, function onPlayerReady() {
       videojs.log('Your player is ready!');
       // In this context, `this` is the player that was created by Video.js.
@@ -54,6 +88,7 @@
         window.alert('Your training is over');
       });
     });
+
   </script>
 
 </body>
