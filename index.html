@@ -41,19 +41,23 @@
     var options = {};
     const video = document.getElementById('my-player');
     var source = {};
-    source['src'] = 'videoplayback.mp4';
-    source['type'] = 'video/mp4';
+    // source['src'] = 'videoplayback.mp4';
+    // source['type'] = 'video/mp4';
     for(key of keys){
       if(key == 'progressControl' && urlParams.get(key) == 'false'){
           var progress = {};
           progress['progressControl'] = false;
           options['controlBar'] = progress;
       }else if(key == 'fullscreen' && urlParams.get(key) == 'true'){
-        video.style.setProperty('width', '100vw');
-        video.style.setProperty('height', '100vh');
+          video.style.setProperty('width', '100vw');
+          video.style.setProperty('height', '100vh');
+      }else if(key == 'path'){
+         var path = urlParams.get(key);
+         var fileType = path.substring(path.lastIndexOf('.') + 1)
+         source['src'] = path;
+         source['type'] = 'video/' + fileType;
       }
       else options[key] = urlParams.get(key) == 'true';
-      // else options[key] = urlParams.get(key);
     }
     options['sources'] = source;
     const togglePipButton = document.getElementById('togglePipButton');
